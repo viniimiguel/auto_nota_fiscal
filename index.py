@@ -14,7 +14,7 @@ class Nota_fiscal:
         self.driver = webdriver.Chrome()
         self.driver.set_window_size(462,976)
         self.sitelink='https://erp.tiny.com.br/login/'
-        self.cnpj_empresa = ['42.247.586/0001-33', '34.028.316/0001-03', '20.121.850/0001-55', '34.268.705/0001-06']
+        self.cnpj_empresa = ['42.247.586/0001-33', '34.028.316/0001-03', '20.121.850/0001-55', '34.268.705/0001-06', '24.230.747/0001-02']
         self.login={
             'credenciais':{
                 'login':'/html/body/div/div/div/div/div[1]/div[1]/div[2]/div/input',
@@ -64,12 +64,12 @@ class Nota_fiscal:
             print(f'Erro {e}')
             
     def envia(self):
-        self.contador=1
+        
 
         while True:
                 notas={
                     'ne_fiscais':{
-                        'NT':f'/html/body/div[7]/div/div[4]/div[2]/div[2]/div/div[1]/form/table/tbody/tr[{self.contador}]/td[3]'
+                        'NT':f'/html/body/div[7]/div/div[4]/div[2]/div[2]/div/div[1]/form/table/tbody/tr[1]/td[3]'
                     }
                 }
                 self.editar={
@@ -77,7 +77,12 @@ class Nota_fiscal:
                         'edit':'/html/body/div[7]/div/div[5]/div[1]/div/button',
                         'cnpj':'/html/body/div[7]/div/div[5]/div[2]/div[2]/form/div[13]/div/div[5]/div[1]/div[2]/input',
                         'desconto':'/html/body/div[7]/div/div[5]/div[2]/div[2]/form/div[10]/div[1]/div[13]/input',
-                        'salvar':'/html/body/div[7]/div/div[5]/div[2]/div[2]/form/div[17]/div/div/button[2]'
+                        'salvar':'/html/body/div[7]/div/div[5]/div[2]/div[2]/form/div[17]/div/div/button[2]',
+                        'opcoes':'/html/body/div[7]/div/div[5]/div[1]/div/div[2]/button',
+                        'sefaz':'/html/body/div[7]/div/div[5]/div[1]/div/div[2]/ul/li[1]/a',
+                        'enviar_sefaz':'/html/body/div[1]/div/div/div/div[3]/div[1]/button[1]',
+                        'fechar_nota':'/html/body/div[1]/div/div/div/div[3]/div[11]/button[2]',
+                        'voltar_pendentes':'/html/body/div[7]/div/div[5]/div[1]/ol/li[1]/a'
                     }
                 }
                 try:
@@ -85,42 +90,59 @@ class Nota_fiscal:
                     sleep(5)
                     self.driver.find_element(By.XPATH,self.editar ['valores']['edit']).click()
                     sleep(5)
-                    valida=self.driver.find_element(By.XPATH,self.editar['valores']['cnpj'])
-                    validat=valida.text
-                    print (validat)
+                    valida=self.driver.find_element(By.XPATH,self.editar['valores']['cnpj']).text
+                   
                     print(valida)
-                    if validat[0]== '42.247.586/0001-33':
+                    if valida=='42.247.586/0001-33':
                         ds=self.driver.find_element(By.XPATH,self.editar['valores']['desconto'])
                         
                         sleep(1)
                         desconto='80%'
+                        ds.send_keys(" \b\b\b\b\b")
                         ds.send_keys(desconto)
-                    elif validat[1]== '34.028.316/0001-03':
+                    elif valida=='34.028.316/0001-03':
                         ds=self.driver.find_element(By.XPATH,self.editar['valores']['desconto'])
                         
                         sleep(1)
                         desconto='80%'
+                        ds.send_keys(" \b\b\b\b\b")
                         ds.send_keys(desconto)
-                    elif validat[2]== '20.121.850/0001-55':
+                    elif valida=='20.121.850/0001-55':
                         ds=self.driver.find_element(By.XPATH,self.editar['valores']['desconto'])
                         
                         sleep(1)
                         desconto='50%'
+                        ds.send_keys(" \b\b\b\b\b")
                         ds.send_keys(desconto)
-                    elif validat[3]== '34.268.705/0001-06':
+                    elif valida=='34.268.705/0001-06':
                         ds=self.driver.find_element(By.XPATH,self.editar['valores']['desconto'])
                         
                         sleep(1)
                         desconto='90%'
+                        ds.send_keys(" \b\b\b\b\b")
                         ds.send_keys(desconto)
+                    elif valida=='24.230.747/0001-02':
+                        pass
                     else:
                         ds=self.driver.find_element(By.XPATH,self.editar['valores']['desconto'])
                         
                         sleep(1)
                         desconto='80%'
+                        ds.send_keys(" \b\b\b\b\b")
                         ds.send_keys(desconto)
-                    self.driver.find_element(By.XPATH,self.editar['valores']['salvar'])
-                    self.contador += 1
+                    self.driver.find_element(By.XPATH,self.editar['valores']['salvar']).click()
+                    sleep(5)
+                    self.driver.find_element(By.XPATH,self.editar['valores']['opcoes']).click()
+                    sleep(4)
+                    self.driver.find_element(By.XPATH,self.editar['valores']['sefaz']).click()
+                    sleep(4)
+                    self.driver.find_element(By.XPATH,self.editar['valores']['enviar_sefaz']).click()
+                    sleep(10)
+                    self.driver.find_element(By.XPATH,self.editar['valores']['fechar_nota']).click()
+                    sleep(5)
+                    self.driver.find_element(By.XPATH,self.editar['valores']['voltar_pendentes']).click()
+                    sleep(5)
+                    
                 except NoSuchElementException:
                     break
                 except Exception as e:
